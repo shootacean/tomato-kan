@@ -18,12 +18,12 @@
           <v-btn flat icon color="blue lighten-2"
                  @click="startTimer(pomodoroTime)"
                  v-if="!isCounting">
-            <v-icon>play_arrow</v-icon>
+            <v-icon x-large>play_arrow</v-icon>
           </v-btn>
           <v-btn flat icon color="red lighten-2"
                  @click="stopTimer"
                  v-if="isCounting">
-            <v-icon>stop</v-icon>
+            <v-icon x-large>stop</v-icon>
           </v-btn>
         </v-layout>
       </v-container>
@@ -52,16 +52,23 @@
       this.startTimer(this.pomodoroTime);
     }
 
+    /**
+     * 残り時間(分)
+     */
     get remainMinutes(): string {
       return Math.floor(this.remainTime / 60).toString().padStart(2, '0');
     }
 
+    /**
+     * 残り時間(秒)
+     */
     get remainSeconds(): string {
       return (this.remainTime % 60).toString().padStart(2, '0');
     }
 
     private startTimer(seconds: number) {
       clearInterval(this.interval);
+      this.value = 0;
       this.remainTime = seconds - 1;
       this.value = 0;
       this.interval = setInterval(() => {
@@ -77,6 +84,7 @@
 
     private stopTimer(seconds: number) {
       clearInterval(this.interval);
+      this.value = 0;
       this.remainTime = this.pomodoroTime;
       this.isCounting = false;
     }
