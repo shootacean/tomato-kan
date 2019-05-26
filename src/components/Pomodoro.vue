@@ -1,33 +1,39 @@
 <template>
   <v-container>
-    <h2>Pomodoro</h2>
-    <h3>Count ten</h3>
-    <v-progress-circular
-            :rotate="360"
-            :size="400"
-            :width="20"
-            :value="value"
-            :button="true"
-            color="#ED4726"
-    >
-      <v-container>
-        <v-layout align-center column>
-          <p>
-            {{ remainMinutes }}:{{ remainSeconds }}
-          </p>
-          <v-btn flat icon color="blue lighten-2"
-                 @click="startTimer(pomodoroTime)"
-                 v-if="!isCounting">
-            <v-icon x-large>play_arrow</v-icon>
-          </v-btn>
-          <v-btn flat icon color="red lighten-2"
-                 @click="stopTimer"
-                 v-if="isCounting">
-            <v-icon x-large>stop</v-icon>
-          </v-btn>
-        </v-layout>
-      </v-container>
-    </v-progress-circular>
+    <v-layout align-center column>
+      <v-progress-circular
+              :rotate="-90"
+              :size="400"
+              :width="20"
+              :value="value"
+              :button="true"
+              color="#ED4726"
+      >
+        <v-container>
+          <v-layout align-center column>
+            <p>{{ remainMinutes }}:{{ remainSeconds }}</p>
+            <p>
+              <v-layout align-center>
+                <v-icon small color="red"
+                        v-for="(_, i) in todayPomodoros"
+                >brightness_1
+                </v-icon>
+              </v-layout>
+            </p>
+            <v-btn flat icon color="red lighten-2"
+                   @click="startTimer(pomodoroTime)"
+                   v-if="!isCounting">
+              <v-icon x-large>play_arrow</v-icon>
+            </v-btn>
+            <v-btn flat icon color="red lighten-2"
+                   @click="stopTimer"
+                   v-if="isCounting">
+              <v-icon x-large>stop</v-icon>
+            </v-btn>
+          </v-layout>
+        </v-container>
+      </v-progress-circular>
+    </v-layout>
   </v-container>
 </template>
 
@@ -43,6 +49,7 @@
     private value: number = 0;
     private remainTime: number = 0;
     private pomodoroTime: number = 60 * 25;
+    private todayPomodoros: number = 0;
 
     private beforeDestroy() {
       clearInterval(this.interval);
@@ -75,6 +82,7 @@
         this.value += (100 / seconds);
         this.remainTime -= 1;
         if (this.value >= 100) {
+          this.todayPomodoros++;
           this.remainTime = seconds;
           return (this.value = 0);
         }
