@@ -10,7 +10,23 @@
             :button="true"
             color="#ED4726"
     >
-      {{ remainMinutes }}:{{ remainSeconds }}
+      <v-container>
+        <v-layout align-center column>
+          <p>
+            {{ remainMinutes }}:{{ remainSeconds }}
+          </p>
+          <v-btn flat icon color="blue lighten-2"
+                 @click="startTimer(pomodoroTime)"
+                 v-if="!isCounting">
+            <v-icon>play_arrow</v-icon>
+          </v-btn>
+          <v-btn flat icon color="red lighten-2"
+                 @click="stopTimer"
+                 v-if="isCounting">
+            <v-icon>stop</v-icon>
+          </v-btn>
+        </v-layout>
+      </v-container>
     </v-progress-circular>
   </v-container>
 </template>
@@ -22,28 +38,32 @@
     components: {},
   })
   export default class Pomodoro extends Vue {
+    private isCounting: boolean = true;
     private interval: number = 0;
     private value: number = 0;
     private remainTime: number = 0;
+    private pomodoroTime: number = 60 * 25;
 
     private beforeDestroy() {
       clearInterval(this.interval);
     }
 
     private mounted() {
-      this.setTimer(60 * 25);
+      this.startTimer(this.pomodoroTime);
     }
 
-    get remainMinutes(): number {
-      return Math.floor(this.remainTime / 60);
+    get remainMinutes(): string {
+      return Math.floor(this.remainTime / 60).toString().padStart(2, '0');
     }
 
-    get remainSeconds(): number {
-      return this.remainTime % 60;
+    get remainSeconds(): string {
+      return (this.remainTime % 60).toString().padStart(2, '0');
     }
 
-    private setTimer(seconds: number) {
+    private startTimer(seconds: number) {
+      clearInterval(this.interval);
       this.remainTime = seconds - 1;
+      this.value = 0;
       this.interval = setInterval(() => {
         this.value += (100 / seconds);
         this.remainTime -= 1;
@@ -52,6 +72,13 @@
           return (this.value = 0);
         }
       }, 1000);
+      this.isCounting = true;
+    }
+
+    private stopTimer(seconds: number) {
+      clearInterval(this.interval);
+      this.remainTime = this.pomodoroTime;
+      this.isCounting = false;
     }
   }
 </script>
