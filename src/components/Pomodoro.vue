@@ -5,7 +5,7 @@
               :rotate="-90"
               :size="400"
               :width="20"
-              :value="value"
+              :value="progressPercent"
               :button="true"
               :color="pomodoroColor"
       >
@@ -64,7 +64,7 @@
     private isCounting: boolean = false;
     private isFocus: boolean = true;
     private interval: number = 0;
-    private value: number = 0;
+    private progressPercent: number = 0;
     private pomodoroColor: PomodoroColor = '#ED4726';
     private todayPomodoros: number = 0;
     private pomodoroTime: number = 3; // 60 * 25;
@@ -93,13 +93,13 @@
 
     private startTimer(seconds: number): void {
       clearInterval(this.interval);
-      this.value = 0;
+      this.progressPercent = 0;
       this.remainTime = seconds;
       // todo: refactoring
       this.interval = setInterval(() => {
-        this.value += (100 / seconds);
+        this.progressPercent += (100 / seconds);
         this.remainTime--;
-        if (this.value >= 100) {
+        if (this.progressPercent >= 100) {
           // タイマー終了時
           this.remainTime = seconds;
           if (this.isFocus) {
@@ -119,7 +119,7 @@
             this.switchMode(true);
             this.stopTimer();
           }
-          return (this.value = 0);
+          return (this.progressPercent = 0);
         }
       }, 1000);
       this.isCounting = true;
@@ -130,7 +130,7 @@
       this.isCounting = false;
       this.isFocus = true;
       this.switchMode(true);
-      this.value = 0;
+      this.progressPercent = 0;
       this.remainTime = this.pomodoroTime;
     }
 
