@@ -53,9 +53,9 @@
     private value: number = 0;
     private pomodoroColor: PomodoroColor = '#ED4726';
     private todayPomodoros: number = 0;
-    private pomodoroTime: number = 60 * 25;
-    private shortBreakTime: number = 60 * 5;
-    private longBreakTime: number = 60 * 15;
+    private pomodoroTime: number = 3; // 60 * 25;
+    private shortBreakTime: number = 2; // 60 * 5;
+    private longBreakTime: number = 5; // 60 * 15;
     private remainTime: number = this.pomodoroTime;
 
     private beforeDestroy() {
@@ -112,9 +112,11 @@
 
     private stopTimer() {
       clearInterval(this.interval);
+      this.isCounting = false;
+      this.isFocus = true;
+      this.switchMode(true);
       this.value = 0;
       this.remainTime = this.pomodoroTime;
-      this.isCounting = false;
     }
 
     private startFocusTimer() {
