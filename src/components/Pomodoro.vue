@@ -7,7 +7,7 @@
               :width="20"
               :value="value"
               :button="true"
-              color="#ED4726"
+              :color="pomodoroColor"
       >
         <v-container>
           <v-layout align-center column>
@@ -21,7 +21,7 @@
               </v-layout>
             </p>
             <v-btn flat icon color="red lighten-2"
-                   @click="startTimer(pomodoroTime)"
+                   @click="startFocusTimer"
                    v-if="!isCounting">
               <v-icon x-large>play_arrow</v-icon>
             </v-btn>
@@ -40,23 +40,25 @@
 <script lang="ts">
   import {Component, Vue} from 'vue-property-decorator';
 
+  type PomodoroColor = '#ED4726' | '#9fed52';
+
   @Component({
     components: {},
   })
   export default class Pomodoro extends Vue {
-    private isCounting: boolean = true;
+    private isCounting: boolean = false;
+    private isFocus: boolean = true;
     private interval: number = 0;
     private value: number = 0;
-    private remainTime: number = 0;
-    private pomodoroTime: number = 60 * 25;
+    private pomodoroColor: PomodoroColor = '#ED4726';
     private todayPomodoros: number = 0;
+    private pomodoroTime: number = 3; // 60 * 25;
+    private shortBreakTime: number = 2; // 60 * 5;
+    private longBreakTime: number = 10; // 60 * 15;
+    private remainTime: number = this.pomodoroTime;
 
     private beforeDestroy() {
       clearInterval(this.interval);
-    }
-
-    private mounted() {
-      this.startTimer(this.pomodoroTime);
     }
 
     /**
@@ -76,26 +78,58 @@
     private startTimer(seconds: number) {
       clearInterval(this.interval);
       this.value = 0;
-      this.remainTime = seconds - 1;
-      this.value = 0;
+      this.remainTime = seconds;
+      // todo: refactoring
       this.interval = setInterval(() => {
         this.value += (100 / seconds);
-        this.remainTime -= 1;
+        this.remainTime--;
         if (this.value >= 100) {
-          this.todayPomodoros++;
+          // タイマー終了時
           this.remainTime = seconds;
+          if (this.isFocus) {
+            // Next is break
+            this.isFocus = false;
+            this.todayPomodoros++;
+            if (this.todayPomodoros % 4 === 0) {
+              this.startBreakTimer(true);
+            } else {
+              this.startBreakTimer(false);
+            }
+          } else {
+            // Next is focus
+            this.isFocus = true;
+            this.switchMode(true);
+            this.stopTimer();
+          }
           return (this.value = 0);
         }
       }, 1000);
       this.isCounting = true;
     }
 
-    private stopTimer(seconds: number) {
+    private stopTimer() {
       clearInterval(this.interval);
       this.value = 0;
       this.remainTime = this.pomodoroTime;
       this.isCounting = false;
     }
+
+    private startFocusTimer() {
+      this.switchMode(true);
+      this.startTimer(this.pomodoroTime);
+    }
+
+    private startBreakTimer(isLong: boolean) {
+      this.switchMode(false);
+      const time = isLong ? this.longBreakTime : this.shortBreakTime;
+      this.startTimer(time);
+    }
+
+    private switchMode(isFocus: boolean) {
+      this.pomodoroColor = isFocus ? '#ED4726' : '#9fed52';
+    }
+
+    // todo: push notification
   }
 </script>
 
