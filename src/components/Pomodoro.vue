@@ -33,6 +33,20 @@
           </v-layout>
         </v-container>
       </v-progress-circular>
+      <v-layout align-center column>
+        <v-btn flat icon color="black lighten-2"
+               @click="incrementInterrupt">
+          <v-icon x-large>stop</v-icon>
+        </v-btn>
+        <p>
+          <v-layout align-center>
+            <v-icon small color="black"
+                    v-for="(_, i) in interruptCount"
+            >brightness_1
+            </v-icon>
+          </v-layout>
+        </p>
+      </v-layout>
     </v-layout>
   </v-container>
 </template>
@@ -57,6 +71,7 @@
     private shortBreakTime: number = 2; // 60 * 5;
     private longBreakTime: number = 5; // 60 * 15;
     private remainTime: number = this.pomodoroTime;
+    private interruptCount: number = 0;
 
     private beforeDestroy() {
       clearInterval(this.interval);
@@ -138,6 +153,10 @@
       push.create(msg, {
         timeout: 5000,
       });
+    }
+
+    private incrementInterrupt(): void {
+      this.interruptCount++;
     }
   }
 </script>
