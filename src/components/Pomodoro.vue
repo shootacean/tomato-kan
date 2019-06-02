@@ -91,7 +91,7 @@
       return (this.remainTime % 60).toString().padStart(2, '0');
     }
 
-    private startTimer(seconds: number) {
+    private startTimer(seconds: number): void {
       clearInterval(this.interval);
       this.value = 0;
       this.remainTime = seconds;
@@ -125,7 +125,7 @@
       this.isCounting = true;
     }
 
-    private stopTimer() {
+    private stopTimer(): void {
       clearInterval(this.interval);
       this.isCounting = false;
       this.isFocus = true;
@@ -134,18 +134,18 @@
       this.remainTime = this.pomodoroTime;
     }
 
-    private startFocusTimer() {
+    private startFocusTimer(): void {
       this.switchMode(true);
       this.startTimer(this.pomodoroTime);
     }
 
-    private startBreakTimer(isLong: boolean) {
+    private startBreakTimer(isLong: boolean): void {
       this.switchMode(false);
       const time = isLong ? this.longBreakTime : this.shortBreakTime;
       this.startTimer(time);
     }
 
-    private switchMode(isFocus: boolean) {
+    private switchMode(isFocus: boolean): void {
       this.pomodoroColor = isFocus ? '#ED4726' : '#9fed52';
     }
 
