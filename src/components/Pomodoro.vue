@@ -39,6 +39,7 @@
 
 <script lang="ts">
   import {Component, Vue} from 'vue-property-decorator';
+  import push from 'push.js';
 
   type PomodoroColor = '#ED4726' | '#9fed52';
 
@@ -52,9 +53,9 @@
     private value: number = 0;
     private pomodoroColor: PomodoroColor = '#ED4726';
     private todayPomodoros: number = 0;
-    private pomodoroTime: number = 3; // 60 * 25;
-    private shortBreakTime: number = 2; // 60 * 5;
-    private longBreakTime: number = 10; // 60 * 15;
+    private pomodoroTime: number = 60 * 25;
+    private shortBreakTime: number = 60 * 5;
+    private longBreakTime: number = 60 * 15;
     private remainTime: number = this.pomodoroTime;
 
     private beforeDestroy() {
@@ -89,6 +90,7 @@
           if (this.isFocus) {
             // Next is break
             this.isFocus = false;
+            this.pushNotification('Take a break!');
             this.todayPomodoros++;
             if (this.todayPomodoros % 4 === 0) {
               this.startBreakTimer(true);
@@ -98,6 +100,7 @@
           } else {
             // Next is focus
             this.isFocus = true;
+            this.pushNotification('Just focus!');
             this.switchMode(true);
             this.stopTimer();
           }
@@ -129,7 +132,11 @@
       this.pomodoroColor = isFocus ? '#ED4726' : '#9fed52';
     }
 
-    // todo: push notification
+    private pushNotification(msg: string) {
+      push.create(msg, {
+        timeout: 5000,
+      });
+    }
   }
 </script>
 
